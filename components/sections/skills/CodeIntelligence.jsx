@@ -1,64 +1,100 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import gsap from "gsap";
+import { useRef, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Text, Float, MeshDistortMaterial, Sphere } from "@react-three/drei";
+import * as THREE from "three";
 
-const skills = ["React", "Next.js", "Node", "Python", "Three.js", "GSAP"];
+const SKILLS = [
+  { name: "React", color: "#61DAFB" },
+  { name: "Next.js", color: "#ffffff" },
+  { name: "GSAP", color: "#88CE02" },
+  { name: "Three.js", color: "#ff3333" },
+  { name: "Python", color: "#3776AB" },
+  { name: "Node.js", color: "#339933" },
+  { name: "Tailwind", color: "#06B6D4" },
+  { name: "TypeScript", color: "#3178C6" }
+];
 
-export default function CodeIntelligence() {
-  const [stack, setStack] = useState(skills);
-  const container = useRef();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStack((prev) => {
-        const newStack = [...prev];
-        newStack.unshift(newStack.pop());
-        return newStack;
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".skill-card",
-        { y: 40, opacity: 0, scale: 0.8 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: "power4.out",
-          stagger: 0.1
-        }
-      );
-    }, container);
-
-    return () => ctx.revert();
-  }, [stack]);
+function SkillNode({ name, color, position, speed }) {
+  const ref = useRef();
+  
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    ref.current.position.y = position[1] + Math.sin(time * speed + position[0]) * 0.2;
+    ref.current.rotation.y += 0.01;
+  });
 
   return (
-    <div
-      ref={container}
-      className="relative w-full h-full flex items-center justify-center perspective-1000 overflow-visible"
-    >
-      {stack.slice(0, 5).map((skill, i) => (
-        <div
-          key={skill}
-          className="skill-card absolute w-[240px] py-6 rounded-2xl bg-white/5 backdrop-blur-xl text-center text-xl font-bold text-white shadow-2xl border border-white/10 transition-all duration-700"
-          style={{
-            transform: `translateY(${i * 24}px) scale(${1 - i * 0.1})`,
-            zIndex: 10 - i,
-            opacity: 1 - i * 0.2,
-            filter: `blur(${i * 1}px)`
-          }}
+    <Float speed={2} rotationIntensity={1} floatIntensity={1}>
+      <mesh ref={ref} position={position}>
+        <Text
+          fontSize={0.2}
+          color={color}
+          anchorX="center"
+          anchorY="middle"
         >
-          <span className={i === 0 ? "neon-glow text-purple-400" : ""}>{skill}</span>
-        </div>
-      ))}
+          {name}
+        </Text>
+      </mesh>
+    </Float>
+  );
+}
+
+function Nucleus() {
+  const mesh = useRef();
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    mesh.current.rotation.x = Math.cos(time / 4) * 0.2;
+    mesh.current.rotation.y = Math.sin(time / 4) * 0.2;
+  });
+
+  return (
+    <Sphere ref={mesh} args={[0.4, 64, 64]}>
+      <MeshDistortMaterial
+        color="#a855f7"
+        speed={3}
+        distort={0.4}
+        radius={1}
+        emissive="#a855f7"
+        emissiveIntensity={0.5}
+      />
+    </Sphere>
+  );
+}
+
+export default function CodeIntelligence() {
+  const nodes = useMemo(() => {
+    return SKILLS.map((skill, i) => {
+      const angle = (i / SKILLS.length) * Math.PI * 2;
+      const radius = 1.6 + Math.random() * 0.4;
+      const pos = [
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+        (Math.random() - 0.5) * 1,
+      ];
+      
+      // Safety check for NaN
+      const safePos = pos.map(v => isNaN(v) ? 0 : v);
+
+      return {
+        ...skill,
+        position: safePos,
+        speed: 0.5 + Math.random() * 1
+      };
+    });
+  }, []);
+
+  return (
+    <div className="w-full h-full cursor-grab active:cursor-grabbing">
+      <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <Nucleus />
+        {nodes.map((node, i) => (
+          <SkillNode key={i} {...node} />
+        ))}
+      </Canvas>
     </div>
   );
 }

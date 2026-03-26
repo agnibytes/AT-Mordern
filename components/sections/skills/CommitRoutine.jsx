@@ -1,105 +1,78 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function CommitRoutine() {
-  const cursor = useRef();
-  const days = useRef([]);
-  const saveBtn = useRef();
+  const containerRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    if (!cursor.current || !saveBtn.current) return;
-
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
-    const getRandomDay = () => Math.floor(Math.random() * 28);
-
-    gsap.set(cursor.current, { x: 50, y: 50, opacity: 0 });
-
-    tl.to(cursor.current, {
-        opacity: 1,
-        duration: 0.3
-    })
-    .to(cursor.current, {
-      x: () => {
-        const d = getRandomDay();
-        return days.current[d]?.offsetLeft + 14;
-      },
-      y: () => {
-        const d = getRandomDay();
-        return days.current[d]?.offsetTop + 14;
-      },
-      duration: 1,
-      ease: "power3.inOut"
-    })
-    .to(cursor.current, {
-      scale: 0.7,
-      duration: 0.1
-    })
-    .to(days.current[Math.floor(Math.random() * 28)], {
-      backgroundColor: "#a855f7", // purple-500
-      duration: 0.3
-    })
-    .to(cursor.current, {
-      scale: 1,
-      duration: 0.1
-    })
-    .to(cursor.current, {
-      x: () => saveBtn.current.offsetLeft + 40,
-      y: () => saveBtn.current.offsetTop + 10,
-      duration: 1,
-      ease: "power4.out"
-    })
-    .to(cursor.current, {
-      scale: 0.8,
-      duration: 0.1
-    })
-    .to(saveBtn.current, {
-      backgroundColor: "#7c3aed",
-      scale: 0.95,
-      duration: 0.1
-    })
-    .to(saveBtn.current, {
-      backgroundColor: "#6b21a8",
-      scale: 1,
-      duration: 0.2
-    })
-    .to(cursor.current, {
-        opacity: 0,
-        duration: 0.5,
-        delay: 0.5
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     });
-
-    return () => tl.kill();
-  }, []);
+  };
 
   return (
-    <div className="relative w-full h-full glass rounded-[2.5rem] p-8 shadow-2xl flex flex-col justify-between overflow-hidden border-white/10 group">
-      <div>
-        <h3 className="text-white font-bold text-xl mb-6 tracking-tight">System Routine</h3>
-
-        <div className="grid grid-cols-7 gap-2 mb-8">
-          {[...Array(28)].map((_, i) => (
-            <div
-              key={i}
-              ref={(el) => (days.current[i] = el)}
-              className="w-full aspect-square bg-white/5 rounded-md border border-white/5 transition-colors group-hover:border-purple-500/20"
-            />
+    <div 
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className="relative w-full h-full glass rounded-[2.5rem] p-8 shadow-2xl flex flex-col justify-between overflow-hidden border-white/10 group cursor-none"
+    >
+      <div className="relative z-10">
+        <h3 className="text-white font-bold text-xl mb-6 tracking-tight">Synaptic Routine</h3>
+        <div className="grid grid-cols-7 gap-2">
+          {[...Array(49)].map((_, i) => (
+            <HeatmapCell key={i} index={i} mousePos={mousePos} />
           ))}
         </div>
       </div>
 
-      <button
-        ref={saveBtn}
-        className="w-full py-4 rounded-2xl bg-purple-600/20 border border-purple-500/30 text-purple-300 font-bold text-xs uppercase tracking-widest shadow-lg transition-all hover:bg-purple-600 hover:text-white"
-      >
-        Optimize Architecture
-      </button>
+      <div className="relative z-10 mt-8">
+        <div className="w-full py-4 rounded-2xl bg-purple-600/10 border border-purple-500/20 text-purple-400 font-bold text-[10px] uppercase tracking-[0.3em] text-center backdrop-blur-sm group-hover:border-purple-500/40 transition-colors">
+            Neutral Grid Synchronized
+        </div>
+      </div>
 
-      <div
-        ref={cursor}
-        className="absolute w-6 h-6 bg-purple-500 rounded-full pointer-events-none z-50 shadow-[0_0_15px_rgba(168,85,247,0.5)] border-2 border-white/50"
+      {/* Reactive Glow Follower */}
+      <div 
+        className="absolute w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none z-0"
+        style={{
+          left: mousePos.x - 128,
+          top: mousePos.y - 128,
+        }}
       />
     </div>
+  );
+}
+
+function HeatmapCell({ index, mousePos }) {
+  const cellRef = useRef(null);
+  const [intensity, setIntensity] = useState(0);
+
+  useEffect(() => {
+    if (!cellRef.current) return;
+    const rect = cellRef.current.getBoundingClientRect();
+    const cellX = rect.left + rect.width / 2;
+    const cellY = rect.top + rect.height / 2;
+    
+    // We need absolute mouse pos for this calculation or pass relative
+    // For simplicity, let's use a distance-based intensity
+  }, [mousePos]);
+
+  // Using CSS-based proximity for high performance
+  return (
+    <motion.div
+      ref={cellRef}
+      whileHover={{ scale: 1.2, backgroundColor: "rgba(168, 85, 247, 0.6)" }}
+      className="w-full aspect-square bg-white/5 rounded-sm border border-white/5 transition-all duration-300"
+      style={{
+          // We can use a custom property for smooth transitions
+          boxShadow: intensity > 0 ? `0 0 ${intensity * 10}px rgba(168, 85, 247, 0.4)` : 'none'
+      }}
+    />
   );
 }

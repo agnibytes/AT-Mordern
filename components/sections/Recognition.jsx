@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { ExternalLink } from "lucide-react";
 
 const Recognition = () => {
   const containerRef = useRef(null);
+  const imageRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -26,6 +28,14 @@ const Recognition = () => {
     return () => ctx.revert();
   }, []);
 
+  const handleMouseMove = (e) => {
+    if (!imageRef.current) return;
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+  };
+
   return (
     <section
       ref={containerRef}
@@ -36,18 +46,40 @@ const Recognition = () => {
       
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
         
-        {/* Left: Achievement Portrait */}
-        <div className="recog-animate relative w-full lg:w-1/2 aspect-[4/5] rounded-[3rem] overflow-hidden group shadow-2xl border border-white/10">
+        {/* Left: Achievement Portrait with Spotlight Mask */}
+        <div 
+            ref={imageRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setMousePos({ x: 50, y: 50 })}
+            className="recog-animate relative w-full lg:w-1/2 aspect-[4/5] rounded-[3rem] overflow-hidden group shadow-2xl border border-white/10 cursor-none"
+        >
            <img
               src="/assets/recognition.jpg"
               alt="Recognition"
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              className="w-full h-full object-cover grayscale brightness-50 contrast-125 transition-all duration-700"
+              style={{
+                  clipPath: `circle(150px at ${mousePos.x}% ${mousePos.y}%)`,
+                  filter: `grayscale(0) brightness(1) contrast(1)`,
+              }}
+           />
+           <img
+              src="/assets/recognition.jpg"
+              alt="Recognition"
+              className="absolute inset-0 w-full h-full object-cover grayscale brightness-50 opacity-100 -z-10"
            />
            
+           <div 
+             className="absolute pointer-events-none w-20 h-20 border-2 border-white/30 rounded-full mix-blend-difference hidden group-hover:block"
+             style={{
+                 left: `${mousePos.x}%`,
+                 top: `${mousePos.y}%`,
+                 transform: 'translate(-50%, -50%)',
+             }}
+           />
         </div>
 
         {/* Right: Context */}
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-1/2 relative z-10">
           <h2 className="recog-animate text-purple-500 font-bold text-sm uppercase tracking-[0.4em] mb-8">Official Endorsement</h2>
           <h3 className="recog-animate text-white font-bold text-5xl md:text-7xl tracking-tighter leading-none mb-10 neon-glow">
             Leadership <br /> & Diplomacy<span className="text-purple-500">.</span>

@@ -150,56 +150,75 @@ const ProjectCard = ({ project }) => {
 };
 
 export default function Projects() {
-  const [filter, setFilter] = useState("All");
-  const filteredProjects = filter === "All" ? projects : projects.filter(p => p.category === filter);
+  const sectionRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    const pin = gsap.fromTo(
+      sectionRef.current,
+      {
+        translateX: 0,
+      },
+      {
+        translateX: `-${(projects.length - 1) * 60 + 20}vw`,
+        ease: "none",
+        duration: 1,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "center center",
+          end: () => `+=${sectionRef.current.offsetWidth}`,
+          scrub: 1,
+          pin: true,
+          pinSpacing: true,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
+    return () => {
+      pin.kill();
+    };
+  }, []);
 
   return (
-    <section id="projects" className="py-32 px-6 bg-black">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div>
-            <h2 className="text-white/40 font-medium text-lg tracking-[0.3em] uppercase mb-4">
-              Selected Work
-            </h2>
-            <h3 className="text-white font-bold text-5xl md:text-6xl tracking-tighter neon-glow">
-              Digital Artifacts<span className="text-purple-500">.</span>
-            </h3>
-          </div>
-
-          <Tabs defaultValue="All" className="w-full md:w-auto" onValueChange={setFilter}>
-            <TabsList className="bg-white/5 border border-white/10 p-1 rounded-full">
-              {["All", "Web App", "Library", "Open Source"].map((f) => (
-                <TabsTrigger
-                  key={f}
-                  value={f}
-                  className="rounded-full px-6 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-                >
-                  {f}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+    <section id="projects" className="relative z-10 overflow-hidden bg-[#050505]">
+      <div>
+        <div className="h-screen flex items-center px-12 md:px-24">
+           <div className="max-w-2xl">
+             <h2 className="text-white/40 font-medium text-lg tracking-[0.3em] uppercase mb-4">Selected Work</h2>
+             <h3 className="text-white font-bold text-5xl md:text-8xl tracking-tighter neon-glow leading-none">
+               Digital Artifacts<span className="text-purple-500">.</span>
+             </h3>
+             <p className="mt-8 text-white/40 text-lg md:text-xl font-light leading-relaxed">
+               A curated collection of systems, interfaces, and open-source contributions. Scroll horizontally to explore the details.
+             </p>
+           </div>
         </div>
 
-        <motion.div 
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        <div 
+          ref={sectionRef} 
+          className="relative h-screen flex items-center gap-[10vw] px-[10vw]"
+          style={{ width: `${projects.length * 60}vw` }}
         >
-          <AnimatePresence mode='popLayout'>
-            {filteredProjects.map((project) => (
-              <motion.div
-                key={project.title}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5 }}
-              >
-                <ProjectCard project={project} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+          {projects.map((project, index) => (
+            <motion.div 
+              key={index} 
+              className="w-[60vw] md:w-[45vw] shrink-0"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: false, amount: 0.1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <ProjectCard project={project} />
+            </motion.div>
+          ))}
+          
+          <div className="w-[20vw] shrink-0 flex flex-col items-center justify-center">
+             <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center group cursor-pointer hover:bg-white/5 transition-all">
+                <Github size={32} className="text-white/40 group-hover:text-purple-500 transition-colors" />
+             </div>
+             <span className="mt-4 text-white/20 text-xs uppercase tracking-widest font-bold">More on GitHub</span>
+          </div>
+        </div>
       </div>
     </section>
   );

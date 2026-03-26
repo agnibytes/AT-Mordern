@@ -12,8 +12,8 @@ import Philosophy from "@/components/sections/Philosophy";
 import Recognition from "@/components/sections/Recognition";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
-import Spotlight from "@/components/ui/Spotlight";
 import Preloader from "@/components/Preloader";
+import BackgroundOrchestrator from "@/components/BackgroundOrchestrator";
 import { ReactLenis } from "lenis/react";
 import { cn } from "@/lib/utils";
 
@@ -28,14 +28,14 @@ export default function Home() {
       )}>
         {loading && <Preloader onComplete={() => setLoading(false)} />}
         
-        <Spotlight />
+        <BackgroundOrchestrator />
         <Navbar />
         
         <main className={cn("transition-all duration-1000", loading ? "blur-xl" : "blur-0")}>
           <Hero />
           <About />
-          <Skills />
           <Projects />
+          <Skills />
           <Experience />
           <HowIThink />
           <Philosophy />

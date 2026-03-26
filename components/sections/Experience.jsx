@@ -46,6 +46,20 @@ const Experience = () => {
     const ctx = gsap.context(() => {
       const cards = cardsRef.current;
       
+      // Path Animation
+      gsap.fromTo(".evolution-path", 
+        { strokeDashoffset: 1000, strokeDasharray: 1000 },
+        {
+          strokeDashoffset: 0,
+          scrollTrigger: {
+            trigger: "#experience",
+            start: "top center",
+            end: "bottom center",
+            scrub: 1
+          }
+        }
+      );
+
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
         
@@ -70,20 +84,39 @@ const Experience = () => {
   }, []);
 
   return (
-    <section ref={containerRef} id="experience" className="bg-black relative pt-32 pb-60 px-6">
-      <div className="max-w-7xl mx-auto mb-20 text-center">
+    <section ref={containerRef} id="experience" className="bg-black relative pt-32 pb-60 px-6 overflow-hidden">
+      <div className="absolute left-1/2 top-40 bottom-40 w-[2px] -translate-x-1/2 z-0 hidden md:block">
+        <svg className="w-full h-full" preserveAspectRatio="none">
+           <path 
+             d="M 1 0 V 2000" 
+             className="evolution-path stroke-purple-500/30" 
+             strokeWidth="2" 
+             fill="none" 
+             strokeDasharray="10 10"
+           />
+           <path 
+             d="M 1 0 V 2000" 
+             className="evolution-path stroke-purple-500" 
+             strokeWidth="2" 
+             fill="none" 
+             style={{ filter: 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.8))' }}
+           />
+        </svg>
+      </div>
+
+      <div className="max-w-7xl mx-auto mb-20 text-center relative z-10">
         <h2 className="text-white/40 font-medium text-lg tracking-[0.3em] uppercase mb-4">Journey</h2>
         <h3 className="text-white font-bold text-5xl md:text-7xl tracking-tighter neon-glow">Evolution Paths<span className="text-purple-500">.</span></h3>
       </div>
 
-      <div className="relative max-w-5xl mx-auto">
+      <div className="relative max-w-5xl mx-auto z-10">
         {experiences.map((exp, i) => (
           <div
             key={i}
             ref={el => cardsRef.current[i] = el}
             className="sticky top-40 mb-20 w-full"
           >
-            <div className="glass rounded-[3rem] overflow-hidden border-white/10 shadow-2xl flex flex-col md:flex-row h-full md:min-h-[400px]">
+            <div className="glass rounded-[3rem] overflow-hidden border-white/10 shadow-2xl flex flex-col md:flex-row h-full md:min-h-[400px] backdrop-blur-2xl">
               {/* Image Side */}
               <div className="relative w-full md:w-1/3 min-h-[200px] md:min-h-[400px]">
                 <img 
@@ -111,8 +144,11 @@ const Experience = () => {
                 <p className="text-white/60 text-lg font-light leading-relaxed max-w-xl"> {exp.desc} </p>
                 
                 <div className="mt-8 flex gap-4">
-                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 cursor-pointer transition-colors">
-                        <Layers className="w-4 h-4 text-purple-500" />
+                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 cursor-pointer transition-colors group">
+                        <Layers className="w-4 h-4 text-purple-500 group-hover:scale-125 transition-transform" />
+                    </div>
+                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 cursor-pointer transition-colors group">
+                        <Code2 className="w-4 h-4 text-purple-500 group-hover:scale-125 transition-transform" />
                     </div>
                 </div>
               </div>
