@@ -74,10 +74,10 @@ const Experience = () => {
            <div 
              key={i}
              ref={el => cardsRef.current[i] = el}
-             className="sticky top-0 h-[100vh] w-full flex items-center justify-center p-8 md:p-20 overflow-hidden" 
+             className="sticky top-0 min-h-screen w-full flex items-center justify-center py-20 px-4 md:p-20" 
            >
               {/* Complex Card Interface */}
-              <div className="card-inner relative w-full max-w-6xl aspect-[4/3] md:aspect-video rounded-[3rem] overflow-hidden shadow-2xl flex border border-white/20 transform-gpu">
+              <div className="card-inner relative w-full max-w-6xl min-h-[60vh] h-auto rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex border border-white/20 transform-gpu bg-charcoal">
                 
                 {/* Background Environment */}
                 <div className="absolute inset-0 z-0 bg-charcoal">
@@ -95,64 +95,62 @@ const Experience = () => {
                 {/* Content Overlay */}
                 <div className="relative z-10 flex flex-col justify-between p-10 md:p-16 h-full w-full lg:w-2/3">
                   
-                  <div className="flex items-center gap-6">
-                     <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                       {exp.icon && <exp.icon size={32} className="text-cream" />}
-                     </div>
-                     <div>
-                       <h3 className="font-jetbrains text-sm uppercase tracking-widest text-clay">{exp.org}</h3>
-                       <p className="font-jakarta text-cream/70 text-sm mt-1 flex items-center gap-2">
-                         <span className="w-1.5 h-1.5 rounded-full bg-moss inline-block"></span>
-                         {exp.date}
-                       </p>
-                     </div>
-                  </div>
+                  {!exp.isHackathon && (
+                    <div className="flex items-center gap-6 mb-8">
+                       <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                         {exp.icon && <exp.icon size={32} className="text-cream" />}
+                       </div>
+                       <div>
+                         <h3 className="font-jetbrains text-sm uppercase tracking-widest text-clay">{exp.org}</h3>
+                         <p className="font-jakarta text-cream/70 text-sm mt-1 flex items-center gap-2">
+                           <span className="w-1.5 h-1.5 rounded-full bg-moss inline-block"></span>
+                           {exp.date}
+                         </p>
+                       </div>
+                    </div>
+                  )}
 
                   {exp.isHackathon ? (
-                    <section className="journey-card mt-4 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
-                      <div className="journey-header flex gap-4 items-center mb-6">
-                        <span className="journey-tag font-jetbrains text-xs bg-clay/20 text-clay px-3 py-1 rounded-full uppercase tracking-wider font-bold">GLOBAL AI SUMMIT</span>
-                        <p className="journey-date font-jakarta text-sm text-cream/70 m-0">Dec 2023</p>
+                    <div className="journey-card flex flex-col items-center justify-center w-full h-auto py-8 lg:py-4">
+                      <div className="journey-text text-cream font-outfit justify-start w-full">
+                        <h3 className="font-garamond italic text-3xl md:text-5xl mb-6">🚀 My First Hackathon Experience</h3>
+
+                        <p className="mb-4 text-cream/90 font-light text-base md:text-lg">
+                          Excited to share that I recently participated in my first-ever hackathon
+                          at <strong className="text-white font-medium">Government Polytechnic College, Nagpur</strong> as part of
+                          <strong className="text-white font-medium"> Team Agnibytes</strong>.
+                        </p>
+
+                        <p className="mb-4 text-cream/90 font-light text-base md:text-lg">
+                          Along with my teammates <br/>
+                          <strong className="text-white font-medium">Vineet Ravi Mandhalkar</strong>, <strong className="text-white font-medium">Tanmay Sahare</strong>, and <strong className="text-white font-medium">Vikramaditya Kambani</strong>, we joined to explore, learn, and gain hands-on experience.
+                        </p>
+
+                        <p className="mb-6 text-cream/90 font-light text-base md:text-lg">
+                          It was an amazing journey filled with teamwork, problem-solving,
+                          and valuable learning. Looking forward to many more opportunities
+                          to build and innovate.
+                        </p>
+
+                        <div className="hashtags font-jetbrains text-xs text-cream/50 mb-8 flex flex-wrap gap-2">
+                          <span>#Hackathon</span>
+                          <span>#TeamAgnibytes</span>
+                          <span>#LearningJourney</span>
+                          <span>#Teamwork</span>
+                          <span>#SkillDevelopment</span>
+                        </div>
                       </div>
 
-                      <div className="journey-content">
+                      <div className="w-full flex justify-center mt-4">
                         <img 
                           src="/images/certificate.png" 
                           alt="Hackathon Certificate Government Polytechnic Nagpur"
-                          className="certificate-image"
+                          className="w-full max-w-[400px] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/10"
                         />
-
-                        <div className="journey-text text-cream font-outfit text-base">
-                          <h3 className="font-garamond italic text-2xl mb-4">🚀 My First Hackathon Experience</h3>
-
-                          <p className="mb-3 text-cream/90 font-light">
-                            Excited to share that I recently participated in my first-ever hackathon
-                            at <strong className="text-white font-medium">Government Polytechnic College, Nagpur</strong> as part of
-                            <strong className="text-white font-medium"> Team Agnibytes</strong>.
-                          </p>
-
-                          <p className="mb-3 text-cream/90 font-light">
-                            Along with my teammates <br/>
-                            <strong className="text-white font-medium">Vineet Ravi Mandhalkar</strong><br/>
-                            <strong className="text-white font-medium">Tanmay Sahare</strong><br/>
-                            <strong className="text-white font-medium">Vikramaditya Kambani</strong><br/>
-                            we joined to explore, learn, and gain hands-on experience.
-                          </p>
-
-                          <p className="mb-3 text-cream/90 font-light">
-                            It was an amazing journey filled with teamwork, problem-solving,
-                            and valuable learning. Looking forward to many more opportunities
-                            to build and innovate.
-                          </p>
-
-                          <div className="hashtags font-jetbrains text-xs text-cream/50">
-                            #Hackathon #TeamAgnibytes #LearningJourney #Teamwork #SkillDevelopment
-                          </div>
-                        </div>
                       </div>
-                    </section>
+                    </div>
                   ) : (
-                    <div>
+                    <div className="flex-1 flex flex-col justify-center">
                        <h2 className="font-garamond italic font-light text-6xl md:text-7xl lg:text-[6rem] text-cream leading-none mb-6">
                          {exp.role}
                        </h2>
@@ -162,7 +160,7 @@ const Experience = () => {
                     </div>
                   )}
                   
-                  <div className="font-jetbrains text-xs text-cream/40 flex items-center gap-4">
+                  <div className="font-jetbrains text-xs text-cream/40 flex items-center gap-4 mt-12 w-full">
                      <span>FILE_REF: EXPERIENCES/{exp.role.toUpperCase()}.LOG</span>
                      <span className="h-[1px] flex-1 bg-cream/20"></span>
                      <span>[0{i+1}/0{experiences.length}]</span>

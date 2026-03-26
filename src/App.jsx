@@ -18,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   return (
-    <div className="relative w-full min-h-screen font-jakarta text-charcoal bg-cream overflow-hidden selection:bg-moss selection:text-cream">
+    <div className="relative w-full min-h-screen font-jakarta text-charcoal bg-cream selection:bg-moss selection:text-cream">
       {/* Global noise is handled in index.html, but we keep this div structured cleanly */}
       
       <Navbar />

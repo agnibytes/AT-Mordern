@@ -23,18 +23,18 @@ const Hero = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative h-[100dvh] w-full flex items-end pb-24 px-8 md:px-20 overflow-hidden"
+      className="relative h-[100dvh] w-full flex items-end pb-24 px-8 md:px-20 overflow-hidden bg-charcoal"
     >
       {/* Hero Media Layer */}
-      <div className="absolute inset-0 w-full h-full opacity-30 mix-blend-overlay">
+      <div className="absolute inset-0 z-0">
         <img 
           src="/assets/hero.jpg" 
-          alt="Hero Texture" 
-          className="w-full h-full object-cover object-center grayscale contrast-150"
+          alt="Hero" 
+          className="w-full h-full object-cover object-center"
         />
-        {/* Moss -> Black cinematic gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-moss/80 to-transparent mix-blend-multiply opacity-90"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
+        {/* Subtle gradients to ensure text remains readable in the bottom-left */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-transparent to-transparent"></div>
       </div>
 
       {/* Content anchored to bottom-left third */}
