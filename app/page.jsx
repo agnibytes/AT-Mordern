@@ -28,9 +28,10 @@ export default function Home() {
       )}>
         {loading && <Preloader onComplete={() => setLoading(false)} />}
         
+        <Spotlight />
+        <Navbar />
+        
         <main className={cn("transition-all duration-1000", loading ? "blur-xl" : "blur-0")}>
-          <Spotlight />
-          <Navbar />
           <Hero />
           <About />
           <Skills />
